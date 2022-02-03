@@ -2,18 +2,32 @@ import React from 'react';
 import {StyleSheet, Dimensions} from 'react-native';
 import * as COLORS from '../../../../styles/colors';
 
-const {width: viewportWidth} = Dimensions.get('window')
+const {width: viewportWidth} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   foodContainer: {
-      padding: 10,
+    padding: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  emptyImage: {
+    height: viewportWidth * 0.8,
+  },
+  emptyText: {
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: '700',
+    marginTop: 20
   },
   totalAmount: {
     fontSize: 18,
-    fontWeight: '700'
+    fontWeight: '700',
   },
   bottomTools: {
     alignSelf: 'center',
@@ -25,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
     backgroundColor: COLORS.WHITE,
-    borderRadius: 50
+    borderRadius: 50,
   },
   confirmBtn: {
     alignSelf: 'center',

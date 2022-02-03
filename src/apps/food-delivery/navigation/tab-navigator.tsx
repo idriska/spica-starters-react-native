@@ -55,7 +55,7 @@ const FoodDeliveryTabNavigator = () => {
         options={{
           tabBarBadge: basketItemsCount > 0 ? basketItemsCount : undefined,
           tabBarIcon: ({color}) => (
-            <Ionicons name="md-cart-outline" color={color} size={24} />
+            <Ionicons name="md-cart" color={color} size={24} />
           ),
         }}
       />

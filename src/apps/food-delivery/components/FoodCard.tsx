@@ -5,7 +5,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const FoodCard = ({data, changeCount, clicked, type}: any) => {
-  const [count, setCount] = useState(1);
+  const [count, setCount] = useState(data.count ? data.count : 1);
   const [rating, setRating] = useState(0);
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const FoodCard = ({data, changeCount, clicked, type}: any) => {
           </>
         )}
 
-        {type === 'order' && (
+        {(type === 'order' || type === 'choice') && (
           <>
             <View style={styles.flexDirectionRow}>
               {data.ingredients.map((item: any, index: number) => (
@@ -97,7 +97,11 @@ const FoodCard = ({data, changeCount, clicked, type}: any) => {
               <Ionicons
                 size={24}
                 name="remove-circle-outline"
-                onPress={() => changeCountFn(count > 1 ? count - 1 : 1)}
+                onPress={() =>
+                  changeCountFn(
+                    count > 1 ? count - 1 : type === 'choice' ? 1 : 0,
+                  )
+                }
               />
               <Text style={styles.count}>{count}</Text>
               <Ionicons

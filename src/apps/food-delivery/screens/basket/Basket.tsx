@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, View, TouchableOpacity, Text} from 'react-native';
+import {ScrollView, View, TouchableOpacity, Text, Image} from 'react-native';
 import styles from './style';
 import {FoodCard} from '../../components';
 import {basketStore} from '../../redux/store';
+import {Food} from '../../services/bucket';
+import {changeFoodCountAction} from '../../redux/actions';
 
 const Basket = () => {
   const [basket, setBasket] = useState<any>(basketStore.getState());
 
   useEffect(() => {
     const basketSub = basketStore.subscribe(() => {
-      setBasket(basketStore.getState());
+      setBasket(JSON.parse(JSON.stringify(basketStore.getState())));
     });
     return () => {
       basketSub();
@@ -22,23 +24,52 @@ const Basket = () => {
         data={item}
         key={`order-${index}`}
         type="order"
-        changeCount={() => {}}
+        changeCount={(count: number) => {
+          addToOrder(item, count);
+        }}
       />
     ));
   };
 
+  const addToOrder = (food: Food, count: number) => {
+    const index = basketStore
+      .getState()
+      .foods.findIndex((f: any) => isSameFood(f, food));
+
+    if (index != -1) {
+      basketStore.dispatch(changeFoodCountAction({food, count, index}));
+    }
+  };
+
+  const isSameFood = (food1: any, food2: any) => {
+    return (
+      food1._id == food2._id &&
+      food1.ingredients.every((i: any) => food2.ingredients.includes(i)) &&
+      food1.ingredients.length == food2.ingredients.length
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.foodContainer}>{renderBasket()}</ScrollView>
-      <View style={styles.bottomTools}>
-        <View>
-          <Text>Total</Text>
-          <Text style={styles.totalAmount}>{basket.price} USD</Text>
+      {basket.foods.length ? (
+        <>
+          <ScrollView style={styles.foodContainer}>{renderBasket()}</ScrollView>
+          <View style={styles.bottomTools}>
+            <View>
+              <Text>Total</Text>
+              <Text style={styles.totalAmount}>{basket.price} USD</Text>
+            </View>
+            <TouchableOpacity style={styles.confirmBtn}>
+              <Text style={styles.btnText}>Confirm Order</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Image style={styles.emptyImage} source={{uri: 'https://cdn.dribbble.com/users/1168645/screenshots/3152485/media/9beceb082a92006c310a72aa8e2fdfaa.png?compress=1&resize=400x300'}}/>
+          <Text style={styles.emptyText}>There is no food</Text>
         </View>
-        <TouchableOpacity style={styles.confirmBtn}>
-          <Text style={styles.btnText}>Confirm Order</Text>
-        </TouchableOpacity>
-      </View>
+      )}
     </View>
   );
 };

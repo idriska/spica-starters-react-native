@@ -1,4 +1,4 @@
-import {CHANGE_BASKET_AMOUNT, SET_BASKET, SET_BASKET_ITEM} from './types';
+import {CHANGE_BASKET_ITEM_COUNT, SET_BASKET, SET_BASKET_ITEM} from './types';
 
 export function basketReducer(state: any = {foods: []}, action: any) {
   if (action.type === SET_BASKET) {
@@ -8,8 +8,13 @@ export function basketReducer(state: any = {foods: []}, action: any) {
     state.foods.push(action.data);
     state = updateOrderPrice(state);
     return state;
-  } else if (action.type === CHANGE_BASKET_AMOUNT) {
-    state.foods[action.data.index].count += action.data.count;
+  } else if (action.type === CHANGE_BASKET_ITEM_COUNT) {
+    if(action.data.count > 0){
+      state.foods[action.data.index].count = action.data.count;
+    } else {
+      state.foods.splice(action.data.index, 1)
+    }
+    
     state = updateOrderPrice(state);
     return state;
   }

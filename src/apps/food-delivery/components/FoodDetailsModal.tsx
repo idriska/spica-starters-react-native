@@ -59,7 +59,7 @@ const FoodDetailsModal = ({data, complete}: any) => {
       <View style={styles.swipeLine}></View>
       <FoodCard
         data={data}
-        type="order"
+        type="choice"
         changeCount={(value: number) => setCount(value)}
       />
       <View style={[styles.box, styles.flexDirectionCollumn]}>
