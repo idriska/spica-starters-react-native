@@ -2,12 +2,15 @@ import React, {useEffect, useState} from 'react';
 import {ScrollView, View, TouchableOpacity, Text, Image} from 'react-native';
 import styles from './style';
 import {FoodCard} from '../../components';
-import {basketStore} from '../../redux/store';
+import {basketStore, userStore} from '../../redux/store';
 import {Food} from '../../services/bucket';
 import {changeFoodCountAction} from '../../redux/basket/actions';
+import Modal from 'react-native-modal';
+import {SpicaPaymentModal} from '../../../../spica-components';
 
 const Basket = () => {
   const [basket, setBasket] = useState<any>(basketStore.getState());
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   useEffect(() => {
     const basketSub = basketStore.subscribe(() => {
@@ -59,7 +62,9 @@ const Basket = () => {
               <Text>Total</Text>
               <Text style={styles.totalAmount}>{basket.price} USD</Text>
             </View>
-            <TouchableOpacity style={styles.confirmBtn}>
+            <TouchableOpacity
+              style={styles.confirmBtn}
+              onPress={() => setShowPaymentModal(true)}>
               <Text style={styles.btnText}>Confirm Order</Text>
             </TouchableOpacity>
           </View>
@@ -75,6 +80,29 @@ const Basket = () => {
           <Text style={styles.emptyText}>There is no food</Text>
         </View>
       )}
+
+      <Modal
+        isVisible={showPaymentModal}
+        style={{justifyContent: 'flex-end', margin: 0}}
+        swipeDirection="down"
+        onSwipeComplete={() => setShowPaymentModal(false)}>
+        <SpicaPaymentModal
+          totalPrice={basket.price}
+          addresses={userStore.getState()?.address}
+          paymentMethods={[
+            {title: 'Cash'},
+            {title: 'Credit Card'},
+            {title: 'Online'},
+          ]}
+          // data={selectedFood}
+          // complete={(data: any) => {
+          //   if (data) {
+          //     addToOrder(data.food, data.count);
+          //   }
+          //   setModalVisible(false);
+          // }}
+        />
+      </Modal>
     </View>
   );
 };

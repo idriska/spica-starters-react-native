@@ -11,8 +11,10 @@ import {
   changeFoodCountAction,
   setBasketItemAction,
 } from '../../redux/basket/actions';
+import {AuthService} from '../../services/Auth';
 
 const Home = () => {
+  const authService = new AuthService();
   const [categories, setCategories] = useState<any>([]);
   const [foods, setFoods] = useState<any>([]);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -20,6 +22,7 @@ const Home = () => {
   const [selectedFood, setSelectedFood] = useState<any>();
 
   useEffect(() => {
+    authService.getUser();
     getCategories().then(data => {
       setCategories(data);
     });

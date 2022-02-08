@@ -8,3 +8,6 @@ export const SUCCESS = '#42ba96';
 
 export const WHITE = '#FFFFFF';
 export const BLACK = '#000000';
+
+export const HELPER_ORANGE = '#ff9100';
+export const HELPER_LIGHT_ORANGE = '#fff8f1';
