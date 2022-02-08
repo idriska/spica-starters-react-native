@@ -9,12 +9,12 @@ export function basketReducer(state: any = {foods: []}, action: any) {
     state = updateOrderPrice(state);
     return state;
   } else if (action.type === CHANGE_BASKET_ITEM_COUNT) {
-    if(action.data.count > 0){
+    if (action.data.count > 0) {
       state.foods[action.data.index].count = action.data.count;
     } else {
-      state.foods.splice(action.data.index, 1)
+      state.foods.splice(action.data.index, 1);
     }
-    
+
     state = updateOrderPrice(state);
     return state;
   }

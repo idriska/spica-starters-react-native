@@ -10,18 +10,38 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { MainStackParam } from './interfaces/interfaces';
-
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {MainStackParam} from './interfaces/interfaces';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const App = () => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParam>>();
 
   const projects = [
-    {name: 'Food Delivery', icon: 'fast-food-outline', navigage: 'FoodDelivery'},
-    {name: 'Fitness Application', icon: 'ios-barbell', navigage: 'FitnessApp'},
-    {name: 'E-Commerce Application', icon: 'cart-outline', navigage: 'ECommerce'},
+    {
+      projectId: 'FoodDelivery',
+      name: 'Food Delivery',
+      icon: 'fast-food-outline',
+      navigate: 'FoodDelivery',
+    },
+    {
+      projectId: 'Fitness',
+      name: 'Fitness Application',
+      icon: 'ios-barbell',
+      navigate: 'FitnessApp',
+    },
+    {
+      projectId: 'ECommerce',
+      name: 'E-Commerce Application',
+      icon: 'cart-outline',
+      navigate: 'ECommerce',
+    },
   ];
+
+  const goToProject = async (projectId: string, navigator: string) => {
+    await AsyncStorage.setItem('ActiveProject', projectId);
+    navigation.navigate(navigator);
+  };
 
   const renderProjects = () => {
     return projects.map((item, index) => (
@@ -29,9 +49,8 @@ const App = () => {
         style={styles.projectItem}
         key={index}
         onPress={() => {
-          navigation.navigate(item.navigage);
-        }}
-        >
+          goToProject(item.projectId, item.navigate);
+        }}>
         <Ionicons name={item.icon} size={32} />
         <Text style={styles.projectItemText}>{item.name}</Text>
       </TouchableOpacity>

@@ -6,8 +6,8 @@ import Modal from 'react-native-modal';
 import {FoodCard, FoodDetailsModal} from '../../components';
 import {getCategories, getFoods} from '../../services/DataService';
 import {foodStore, basketStore} from '../../redux/store';
-import {changeFoodCountAction, setBasketItemAction} from '../../redux/actions';
 import {Food} from '../../services/bucket';
+import { changeFoodCountAction, setBasketItemAction } from '../../redux/basket/actions';
 
 const Home = () => {
   const [categories, setCategories] = useState<any>([]);

@@ -4,7 +4,7 @@ import styles from './style';
 import {FoodCard} from '../../components';
 import {basketStore} from '../../redux/store';
 import {Food} from '../../services/bucket';
-import {changeFoodCountAction} from '../../redux/actions';
+import {changeFoodCountAction} from '../../redux/basket/actions';
 
 const Basket = () => {
   const [basket, setBasket] = useState<any>(basketStore.getState());
@@ -66,7 +66,12 @@ const Basket = () => {
         </>
       ) : (
         <View style={styles.emptyContainer}>
-          <Image style={styles.emptyImage} source={{uri: 'https://cdn.dribbble.com/users/1168645/screenshots/3152485/media/9beceb082a92006c310a72aa8e2fdfaa.png?compress=1&resize=400x300'}}/>
+          <Image
+            style={styles.emptyImage}
+            source={{
+              uri: 'https://cdn.dribbble.com/users/1168645/screenshots/3152485/media/9beceb082a92006c310a72aa8e2fdfaa.png?compress=1&resize=400x300',
+            }}
+          />
           <Text style={styles.emptyText}>There is no food</Text>
         </View>
       )}

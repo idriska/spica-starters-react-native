@@ -1,6 +1,7 @@
 import {category, food, initialize, order} from './bucket';
-import {setFoodsAction, setBasketAction} from '../redux/actions';
 import {foodStore, basketStore} from '../redux/store';
+import { setFoodsAction } from '../redux/food/actions';
+import { setBasketAction } from '../redux/basket/actions';
 
 export const getFoods = (catId: any = undefined) => {
   initialize({

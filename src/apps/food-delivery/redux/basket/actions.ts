@@ -1,13 +1,5 @@
-import { SET_FOODS, SET_BASKET, SET_BASKET_ITEM, CHANGE_BASKET_ITEM_COUNT } from "./types";
+import {SET_BASKET, SET_BASKET_ITEM, CHANGE_BASKET_ITEM_COUNT} from './types';
 
-export const setFoodsAction = (foods: any) => {
-  return {
-    type: SET_FOODS,
-    data: foods,
-  };
-};
-
-// BASKET ACTIONS
 export const setBasketAction = (basket: any) => {
   return {
     type: SET_BASKET,
