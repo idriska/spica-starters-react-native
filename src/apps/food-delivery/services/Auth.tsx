@@ -4,6 +4,7 @@ import jwt_decode from 'jwt-decode';
 import {initialize, user} from './bucket';
 import {setUserAction} from '../redux/user/actions';
 import {userStore} from '../redux/store';
+import axios from 'axios';
 
 const apiUrl = 'https://spica-starters-7229b.hq.spicaengine.com/api';
 const apikey = 'axfb9k1akx06fe2u';
@@ -23,6 +24,13 @@ export class AuthService {
       await AsyncStorage.setItem(`${activeProject}_SpicaToken`, token);
       return this.getUser();
     });
+  }
+
+  async spicaRegister(userData: any) {
+    return axios.post(`${apiUrl}/fn-execute/register`, {
+      user_data: userData,
+      project: 'FOOD_DELIVERY',
+    })
   }
 
   async getUser() {

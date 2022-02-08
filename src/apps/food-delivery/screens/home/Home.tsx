@@ -7,7 +7,10 @@ import {FoodCard, FoodDetailsModal} from '../../components';
 import {getCategories, getFoods} from '../../services/DataService';
 import {foodStore, basketStore} from '../../redux/store';
 import {Food} from '../../services/bucket';
-import { changeFoodCountAction, setBasketItemAction } from '../../redux/basket/actions';
+import {
+  changeFoodCountAction,
+  setBasketItemAction,
+} from '../../redux/basket/actions';
 
 const Home = () => {
   const [categories, setCategories] = useState<any>([]);
@@ -84,7 +87,9 @@ const Home = () => {
         <FoodDetailsModal
           data={selectedFood}
           complete={(data: any) => {
-            addToOrder(data.food, data.count);
+            if (data) {
+              addToOrder(data.food, data.count);
+            }
             setModalVisible(false);
           }}
         />

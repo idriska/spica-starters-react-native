@@ -9,10 +9,10 @@ const SpicaAuthorization = ({login, register}: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const [credentials, setCredentials] = useState({
-    email: 'admin@gmail.com',
+    email: '',
     name: '',
     surname: '',
-    password: 'admin',
+    password: '',
   });
 
   return (
@@ -53,15 +53,15 @@ const SpicaAuthorization = ({login, register}: any) => {
       {activeIndex === 'login' ? (
         <View style={styles.segmentSection}>
           <SpicaInput
+            keyboardType="email-address"
+            autoCapitalize="none"
             label="E-Mail"
-            value={credentials.email}
             onChangeText={value =>
               setCredentials({...credentials, email: value})
             }
           />
           <SpicaInput
             label="Password"
-            value={credentials.password}
             secureTextEntry={!showPassword}
             onChangeText={value =>
               setCredentials({...credentials, password: value})
@@ -83,12 +83,32 @@ const SpicaAuthorization = ({login, register}: any) => {
         </View>
       ) : (
         <View style={styles.segmentSection}>
-          <SpicaInput label="Name" />
-          <SpicaInput label="Surname" />
-          <SpicaInput label="E-Mail" />
+          <SpicaInput
+            label="Name"
+            onChangeText={value =>
+              setCredentials({...credentials, name: value})
+            }
+          />
+          <SpicaInput
+            label="Surname"
+            onChangeText={value =>
+              setCredentials({...credentials, surname: value})
+            }
+          />
+          <SpicaInput
+            label="E-Mail"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            onChangeText={value =>
+              setCredentials({...credentials, email: value})
+            }
+          />
           <SpicaInput
             label="Password"
             secureTextEntry={!showPassword}
+            onChangeText={value =>
+              setCredentials({...credentials, password: value})
+            }
             right={
               <SpicaInput.Icon
                 name={showPassword ? 'eye-off' : 'eye'}
@@ -100,7 +120,7 @@ const SpicaAuthorization = ({login, register}: any) => {
             contentStyle={{height: 60}}
             icon="login"
             mode="contained"
-            onPress={() => console.log('Pressed')}>
+            onPress={() => register(credentials)}>
             REGISTER
           </SpicaButton>
         </View>

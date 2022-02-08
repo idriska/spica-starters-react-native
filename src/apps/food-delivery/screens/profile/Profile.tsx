@@ -17,29 +17,10 @@ import {userStore} from '../../redux/store';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParam} from '../../../../interfaces/interfaces';
 
-const seperatedItems = [
-  {
-    key: 'email',
-    value: 'test@ads.asd',
-    seperate: true,
-  },
-  {
-    key: 'name',
-    value: 'asd',
-    seperate: true,
-  },
-  {
-    key: 'surname',
-    value: 'asdasd',
-    seperate: true,
-  },
-];
-
 const unseperatedItems = [
   {
     key: 'my_orders',
     value: 'My Orders',
-    seperate: true,
   },
 ];
 
@@ -62,13 +43,34 @@ const Profile = () => {
   const mainNavigation =
     useNavigation<NativeStackNavigationProp<MainStackParam>>();
 
+  const [seperatedItems, setSeperatedItems] = useState([
+    {
+      key: 'Email',
+      value: '',
+    },
+    {
+      key: 'Name',
+      value: '',
+    },
+    {
+      key: 'Surname',
+      value: '',
+    },
+  ]);
   const [isModalVisible, setModalVisible] = useState(false);
   const [user, setUser] = useState<any>(userStore.getState());
   const authService = new AuthService();
 
   useEffect(() => {
     const userSub = userStore.subscribe(() => {
-      setUser(JSON.parse(JSON.stringify(userStore.getState())));
+      let userState: any = userStore.getState();
+      setUser(JSON.parse(JSON.stringify(userState)));
+      if (userState) {
+        seperatedItems.forEach(
+          item => (item.value = userState[item.key] ? userState[item.key] : ''),
+        );
+        setSeperatedItems(seperatedItems);
+      }
     });
     return () => {
       userSub();
@@ -83,6 +85,21 @@ const Profile = () => {
       })
       .catch(err => {
         showToastMessage(err.message);
+      });
+  };
+
+  const register = async (registerData: any) => {
+    await authService
+      .spicaRegister(registerData)
+      .then((res: any) => {
+        showToastMessage(res['message']);
+        login({
+          email: registerData.email,
+          password: registerData.password,
+        });
+      })
+      .catch(error => {
+        showToastMessage(error.response.data.message);
       });
   };
 
@@ -112,7 +129,7 @@ const Profile = () => {
             login(data);
           }}
           register={(data: any) => {
-            console.log(data);
+            register(data);
           }}
         />
       )}

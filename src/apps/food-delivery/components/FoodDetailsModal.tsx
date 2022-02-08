@@ -8,8 +8,12 @@ import {
 } from 'react-native';
 import * as COLORS from '../../../styles/colors';
 import {FoodCard} from '.';
+import {userStore} from '../redux/store';
+import {useNavigation} from '@react-navigation/native';
+import {FoodDeliveryTabParams} from '../interfaces/interfaces';
 
 const FoodDetailsModal = ({data, complete}: any) => {
+  const appNavigation = useNavigation<FoodDeliveryTabParams>();
   const [count, setCount] = useState(1);
   const [extras, setExtras] = useState<string[]>([]);
   const [removeds, setRemoveds] = useState<string[]>([]);
@@ -42,9 +46,14 @@ const FoodDetailsModal = ({data, complete}: any) => {
   };
 
   const addToBasket = () => {
-    normalizeIngredients();
-    complete({food: {...orderFood}, count: count});
-    orderFood = {};
+    if (userStore.getState()) {
+      normalizeIngredients();
+      complete({food: {...orderFood}, count: count});
+      orderFood = {};
+    } else {
+      complete();
+      appNavigation.navigate('Profile');
+    }
   };
 
   const normalizeIngredients = () => {
