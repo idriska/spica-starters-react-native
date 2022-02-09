@@ -62,20 +62,31 @@ const Profile = () => {
   const authService = new AuthService();
 
   useEffect(() => {
+    prepareSeperateItems;
+    let userData = userStore.getState();
+    if (userData) {
+      setUser(userData);
+      prepareSeperateItems(userData);
+    }
+
     const userSub = userStore.subscribe(() => {
       let userState: any = userStore.getState();
-      setUser(JSON.parse(JSON.stringify(userState)));
-      if (userState) {
-        seperatedItems.forEach(
-          item => (item.value = userState[item.key] ? userState[item.key] : ''),
-        );
-        setSeperatedItems(seperatedItems);
-      }
+      setUser(userState);
     });
     return () => {
       userSub();
     };
   }, [user]);
+
+  const prepareSeperateItems = (userData: any) => {
+    seperatedItems.forEach(
+      (item: any) =>
+        (item.value = userData[item.key.toLowerCase()]
+          ? userData[item.key.toLowerCase()]
+          : ''),
+    );
+    setSeperatedItems([...seperatedItems]);
+  };
 
   const login = async (loginData: any) => {
     await authService

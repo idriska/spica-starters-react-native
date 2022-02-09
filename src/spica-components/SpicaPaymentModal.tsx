@@ -66,7 +66,7 @@ const SpicaPaymentModal = ({
               />
               <Text style={styles.addAddressText}>ADD NEW ADDRESS</Text>
             </TouchableOpacity>
-            <ScrollView horizontal={true}>
+            <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
               {addresses.map((item: any, index: number) => (
                 <TouchableOpacity
                   key={`addres-${index}`}
@@ -100,7 +100,7 @@ const SpicaPaymentModal = ({
           onValueChange={value => setPaymentMethod(value)}
           value={paymentMethod}>
           {paymentMethods.map((item: any, index: number) => (
-            <RadioButton.Item label={item.title} value={item.title} />
+            <RadioButton.Item label={item.title} value={item.title}  key={`radiobtn-${index}`}/>
           ))}
         </RadioButton.Group>
       </View>

@@ -11,7 +11,7 @@ const SpicaScrollCategory = ({categories, clicked}: any) => {
   };
 
   return (
-    <ScrollView style={styles.container} horizontal={true}>
+    <ScrollView style={styles.container} horizontal={true} showsHorizontalScrollIndicator={false}>
       <TouchableOpacity
         style={[styles.button, active === 'all' && styles.activeButton]}
         onPress={() => changedActive('all')}>

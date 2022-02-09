@@ -74,7 +74,7 @@ const FoodDetailsModal = ({data, complete}: any) => {
       <View style={[styles.box, styles.flexDirectionCollumn]}>
         <Text style={styles.title}>Ingredients</Text>
         <Text>Please choose the materials that you want to remove.</Text>
-        <ScrollView style={styles.ingredients} horizontal={true}>
+        <ScrollView style={styles.ingredients} horizontal={true} showsHorizontalScrollIndicator={false}>
           {data.ingredients.map((item: any, index: number) => (
             <TouchableOpacity
               style={[
@@ -95,7 +95,7 @@ const FoodDetailsModal = ({data, complete}: any) => {
       <View style={[styles.box, styles.flexDirectionCollumn]}>
         <Text style={styles.title}>Extra Ingredients</Text>
         <Text>Please choose the materials that you want to add.</Text>
-        <ScrollView style={styles.ingredients} horizontal={true}>
+        <ScrollView style={styles.ingredients} horizontal={true} showsHorizontalScrollIndicator={false}>
           {data.ingredients.map((item: any, index: number) => (
             <TouchableOpacity
               style={[
