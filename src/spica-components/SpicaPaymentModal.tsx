@@ -30,7 +30,15 @@ const SpicaPaymentModal = ({
         {!addresses.length ? (
           <TouchableOpacity
             style={styles.addNewAddress}
-            onPress={() => action('newAddress')}>
+            onPress={() =>
+              action({
+                value: 'newAddress',
+                data: {
+                  addressIndex: activeAddress,
+                  paymentMethod: paymentMethod,
+                },
+              })
+            }>
             <Ionicons
               name="add-circle-outline"
               size={24}
@@ -42,7 +50,15 @@ const SpicaPaymentModal = ({
           <>
             <TouchableOpacity
               style={styles.addNewAddressNotEmpty}
-              onPress={() => action('newAddress')}>
+              onPress={() =>
+                action({
+                  value: 'newAddress',
+                  data: {
+                    addressIndex: activeAddress,
+                    paymentMethod: paymentMethod,
+                  },
+                })
+              }>
               <Ionicons
                 name="add-circle-outline"
                 size={24}
@@ -100,7 +116,15 @@ const SpicaPaymentModal = ({
           style={{height: 45, marginTop: 15}}
           contentStyle={{height: 45, width: 100}}
           mode="contained"
-          onPress={() => {}}>
+          onPress={() =>
+            action({
+              value: 'pay',
+              data: {
+                addressIndex: activeAddress,
+                paymentMethod: paymentMethod,
+              },
+            })
+          }>
           PAY
         </SpicaButton>
       </View>

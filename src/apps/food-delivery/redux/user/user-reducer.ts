@@ -6,9 +6,7 @@ export function userReducer(state: any, action: any) {
     state = action.data;
     return state;
   } else if (action.type === UPDATE_USER_ADDRESSES) {
-    console.log("ACTION", action)
     state.address = action.data;
-    console.log("STATE", state)
     return state;
   }
 

@@ -10,9 +10,20 @@ import {
   SpicaAddressModal,
   SpicaPaymentModal,
 } from '../../../../spica-components';
-import {updateUserAddresses} from '../../services/DataService';
+import {insertOrder, updateUserAddresses} from '../../services/DataService';
+import {showToastMessage} from '../../../../services/Helper';
+import {useNavigation} from '@react-navigation/native';
+import {FoodDeliveryTabParams} from '../../interfaces/interfaces';
+
+const paymentMethods = [
+  {title: 'Cash'},
+  {title: 'Credit Card'},
+  {title: 'Online'},
+];
 
 const Basket = () => {
+  const appNavigation = useNavigation<FoodDeliveryTabParams>();
+
   const [basket, setBasket] = useState<any>(basketStore.getState());
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -57,10 +68,12 @@ const Basket = () => {
     );
   };
 
-  const handlePaymenetAction = (value: string) => {
+  const handlePaymenetAction = (data: any) => {
     setShowPaymentModal(false);
-    if (value === 'newAddress') {
+    if (data.value === 'newAddress') {
       setShowAddressModal(true);
+    } else if (data.value === 'pay') {
+      createOrder(data.data);
     }
   };
 
@@ -68,6 +81,18 @@ const Basket = () => {
     setShowAddressModal(false);
     await updateUserAddresses(addressData);
     setShowPaymentModal(true);
+  };
+
+  const createOrder = async (data: any) => {
+    let user = userStore.getState();
+    basket.user = user._id;
+    basket.address = user.address[data.addressIndex];
+    basket.payment_method = data.paymentMethod.replace(' ', '_').toLowerCase();
+
+    insertOrder(basket).then(() => {
+      showToastMessage('Your order has been received successfully');
+      appNavigation.navigate('Home');
+    });
   };
 
   return (
@@ -107,12 +132,8 @@ const Basket = () => {
         <SpicaPaymentModal
           totalPrice={basket.price}
           addresses={userStore.getState()?.address}
-          paymentMethods={[
-            {title: 'Cash'},
-            {title: 'Credit Card'},
-            {title: 'Online'},
-          ]}
-          action={(value: string) => handlePaymenetAction(value)}
+          paymentMethods={paymentMethods}
+          action={(data: any) => handlePaymenetAction(data)}
         />
       </Modal>
 

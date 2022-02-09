@@ -1,4 +1,9 @@
-import {CHANGE_BASKET_ITEM_COUNT, SET_BASKET, SET_BASKET_ITEM} from './types';
+import {
+  CHANGE_BASKET_ITEM_COUNT,
+  SET_BASKET,
+  SET_BASKET_ITEM,
+  CLEAR_BASKET,
+} from './types';
 
 export function basketReducer(state: any = {foods: []}, action: any) {
   if (action.type === SET_BASKET) {
@@ -15,6 +20,10 @@ export function basketReducer(state: any = {foods: []}, action: any) {
       state.foods.splice(action.data.index, 1);
     }
 
+    state = updateOrderPrice(state);
+    return state;
+  } else if (action.type === CLEAR_BASKET) {
+    state.foods = [];
     state = updateOrderPrice(state);
     return state;
   }
