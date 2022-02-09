@@ -3,14 +3,19 @@ import {ScrollView, View, TouchableOpacity, Text, Image} from 'react-native';
 import styles from './style';
 import {FoodCard} from '../../components';
 import {basketStore, userStore} from '../../redux/store';
-import {Food} from '../../services/bucket';
+import {Food, user} from '../../services/bucket';
 import {changeFoodCountAction} from '../../redux/basket/actions';
 import Modal from 'react-native-modal';
-import {SpicaPaymentModal} from '../../../../spica-components';
+import {
+  SpicaAddressModal,
+  SpicaPaymentModal,
+} from '../../../../spica-components';
+import {updateUserAddresses} from '../../services/DataService';
 
 const Basket = () => {
   const [basket, setBasket] = useState<any>(basketStore.getState());
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   useEffect(() => {
     const basketSub = basketStore.subscribe(() => {
@@ -50,6 +55,19 @@ const Basket = () => {
       food1.ingredients.every((i: any) => food2.ingredients.includes(i)) &&
       food1.ingredients.length == food2.ingredients.length
     );
+  };
+
+  const handlePaymenetAction = (value: string) => {
+    setShowPaymentModal(false);
+    if (value === 'newAddress') {
+      setShowAddressModal(true);
+    }
+  };
+
+  const saveAddress = async (addressData: any) => {
+    setShowAddressModal(false);
+    await updateUserAddresses(addressData);
+    setShowPaymentModal(true);
   };
 
   return (
@@ -94,13 +112,17 @@ const Basket = () => {
             {title: 'Credit Card'},
             {title: 'Online'},
           ]}
-          // data={selectedFood}
-          // complete={(data: any) => {
-          //   if (data) {
-          //     addToOrder(data.food, data.count);
-          //   }
-          //   setModalVisible(false);
-          // }}
+          action={(value: string) => handlePaymenetAction(value)}
+        />
+      </Modal>
+
+      <Modal
+        isVisible={showAddressModal}
+        style={{justifyContent: 'flex-end', margin: 0}}
+        swipeDirection="down"
+        onSwipeComplete={() => setShowAddressModal(false)}>
+        <SpicaAddressModal
+          save={(addressData: any) => saveAddress(addressData)}
         />
       </Modal>
     </View>

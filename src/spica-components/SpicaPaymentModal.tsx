@@ -16,6 +16,7 @@ const SpicaPaymentModal = ({
   totalPrice = 0,
   currency = 'USD',
   paymentMethods = [],
+  action,
 }: any) => {
   const [paymentMethod, setPaymentMethod] = useState(paymentMethods[0].title);
   const [activeAddress, setActiveAddress] = useState(0);
@@ -27,7 +28,9 @@ const SpicaPaymentModal = ({
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Shipping Address</Text>
         {!addresses.length ? (
-          <TouchableOpacity style={styles.addNewAddress}>
+          <TouchableOpacity
+            style={styles.addNewAddress}
+            onPress={() => action('newAddress')}>
             <Ionicons
               name="add-circle-outline"
               size={24}
@@ -37,7 +40,9 @@ const SpicaPaymentModal = ({
           </TouchableOpacity>
         ) : (
           <>
-            <TouchableOpacity style={styles.addNewAddressNotEmpty}>
+            <TouchableOpacity
+              style={styles.addNewAddressNotEmpty}
+              onPress={() => action('newAddress')}>
               <Ionicons
                 name="add-circle-outline"
                 size={24}
@@ -48,6 +53,7 @@ const SpicaPaymentModal = ({
             <ScrollView horizontal={true}>
               {addresses.map((item: any, index: number) => (
                 <TouchableOpacity
+                  key={`addres-${index}`}
                   style={[
                     styles.addressContainer,
                     activeAddress === index && styles.activeAddress,
@@ -86,13 +92,13 @@ const SpicaPaymentModal = ({
       <View style={styles.priceContainer}>
         <View style={{justifyContent: 'center'}}>
           <Text>Amount to be paid</Text>
-          <Text>
+          <Text style={styles.price}>
             {totalPrice} {currency}
           </Text>
         </View>
         <SpicaButton
-          style={{height: 50}}
-          contentStyle={{height: 50, width: 100}}
+          style={{height: 45, marginTop: 15}}
+          contentStyle={{height: 45, width: 100}}
           mode="contained"
           onPress={() => {}}>
           PAY
@@ -106,7 +112,7 @@ export default SpicaPaymentModal;
 
 const styles = StyleSheet.create({
   container: {
-    height: 570,
+    height: 580,
     paddingTop: 15,
     backgroundColor: COLORS.WHITE,
     borderTopEndRadius: 30,
@@ -147,9 +153,10 @@ const styles = StyleSheet.create({
   addAddressText: {
     color: COLORS.HELPER_ORANGE,
     marginLeft: 5,
-    marginBottom: 20
+    marginBottom: 20,
   },
   priceContainer: {
+    borderTopWidth: 1,
     position: 'absolute',
     bottom: 0,
     height: 70,
@@ -193,5 +200,9 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 7,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  price: {
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

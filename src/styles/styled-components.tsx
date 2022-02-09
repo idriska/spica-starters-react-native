@@ -5,8 +5,9 @@ import { TextInput, Button} from 'react-native-paper';
 
 
 const SpicaInput = styled(TextInput)({
-  paddingHorizontal: 10,
-  marginVertical: 5
+  paddingHorizontal: 0,
+  marginVertical: 5,
+  backgroundColor: 'transparent'
 });
 
 const SpicaButton = styled(Button)({
