@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, ScrollView, Text} from 'react-native';
 import {SpicaButton} from '../../../../styles/styled-components';
 import {userStore} from '../../redux/store';
-import {order} from '../../services/bucket';
+import {food, order, rating} from '../../services/bucket';
 import styles from './style';
 import * as COLORS from '../../../../styles/colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,7 +12,8 @@ import {SpicaRateModal} from '../../../../spica-components';
 
 const MyOrders = () => {
   const [orders, setOrders] = useState<any>([]);
-  const [showRateModal, setShowRateModal] = useState(true);
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>('');
 
   useEffect(() => {
     getMyOrders().then(orders => {
@@ -38,7 +39,26 @@ const MyOrders = () => {
     });
   };
 
-  const rate = (orderId: string) => {};
+  const rate = async (data: any) => {
+    let user = userStore.getState();
+    let ratingData = {
+      user: user._id,
+      rating: data.rating,
+      comment: data.comment,
+    };
+
+    let orderIndex = orders.findIndex((el: any) => el._id == selectedOrder._id);
+    orders[orderIndex]['rating'] = ratingData;
+    let newRating: any = await rating.insert(ratingData);
+    order.patch({_id: selectedOrder._id, rating: newRating._id});
+    for (const el of selectedOrder.foods) {
+      let tempFood = await food.get(el._id);
+      tempFood.ratings = tempFood.ratings || [];
+      tempFood.ratings.push(newRating._id);
+      food.patch({_id: tempFood._id, ratings: tempFood.ratings});
+    }
+    setShowRateModal(false);
+  };
 
   return (
     <ScrollView style={styles.ordersContainer}>
@@ -68,7 +88,10 @@ const MyOrders = () => {
                 contentStyle={{height: 40}}
                 style={styles.rateBtn}
                 mode="contained"
-                onPress={() => rate(order._id)}>
+                onPress={() => {
+                  setShowRateModal(true);
+                  setSelectedOrder(order);
+                }}>
                 Rate
               </SpicaButton>
             )}
@@ -91,7 +114,7 @@ const MyOrders = () => {
         style={{justifyContent: 'flex-end', margin: 0}}
         swipeDirection="down"
         onSwipeComplete={() => setShowRateModal(false)}>
-        <SpicaRateModal title="Rate Food" action={() => {}}/>
+        <SpicaRateModal title="Rate Food" action={(data: any) => rate(data)} />
       </Modal>
     </ScrollView>
   );

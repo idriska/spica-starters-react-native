@@ -4,8 +4,6 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity,
-  ScrollView,
 } from 'react-native';
 import * as COLORS from '../styles/colors';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -23,9 +21,10 @@ const SpicaRateModal = ({title, action}: any) => {
       <View style={styles.starsContainer}>
         {[1, 2, 3, 4, 5].map((item: number, index: number) => (
           <MaterialCommunityIcons
+            onPress={() => setRating(item)}
             key={`star-${index}`}
             name="star"
-            style={styles.star}
+            style={[styles.star, rating >= item && styles.active]}
           />
         ))}
       </View>
@@ -40,7 +39,7 @@ const SpicaRateModal = ({title, action}: any) => {
         contentStyle={{height: 50}}
         style={styles.applyBtn}
         mode="contained"
-        onPress={() => action()}>
+        onPress={() => action({rating: rating, comment: comment})}>
         APPLY
       </SpicaButton>
     </View>
@@ -81,13 +80,17 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 32,
-    color: 'rgb(255, 196, 0)',
+    borderColor: COLORS.HELPER_GRAY,
     marginHorizontal: 7,
+  },
+  active: {
+    color: 'rgb(255, 196, 0)',
   },
   comment: {
     width: 250,
     padding: 10,
     borderWidth: 1,
+    borderColor: COLORS.HELPER_GRAY,
     borderRadius: 10,
     textAlignVertical: 'top',
   },
