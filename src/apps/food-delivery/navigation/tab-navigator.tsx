@@ -10,6 +10,7 @@ import Profile from '../screens/profile/Profile';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {basketStore} from '../redux/store';
+import FoodDeliveryProfileStackNavigator from './profile-stack-navigator';
 
 const Tab = createBottomTabNavigator<FoodDeliveryTabParams>();
 
@@ -60,8 +61,8 @@ const FoodDeliveryTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={Profile}
+        name="ProfileNavigator"
+        component={FoodDeliveryProfileStackNavigator}
         options={{
           tabBarIcon: ({color}) => (
             <FontAwesome name="user-circle-o" color={color} size={24} />

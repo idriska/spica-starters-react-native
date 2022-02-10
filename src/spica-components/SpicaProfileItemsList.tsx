@@ -8,6 +8,7 @@ const SpicaProfileItemsList = ({
   unseperatedItems,
   canLogout = true,
   logout,
+  navigateTo,
 }: any) => {
   return (
     <View>
@@ -21,7 +22,7 @@ const SpicaProfileItemsList = ({
       </View>
       <View>
         {unseperatedItems.map((item: any, index: number) => (
-          <TouchableOpacity style={styles.itemBox} key={`unseperate-${index}`}>
+          <TouchableOpacity style={styles.itemBox} key={`unseperate-${index}`} onPress={() => navigateTo(item.navigator)}>
             <Text style={[styles.item, styles.itemKey]}>{item.value}</Text>
           </TouchableOpacity>
         ))}

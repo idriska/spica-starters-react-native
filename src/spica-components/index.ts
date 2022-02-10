@@ -5,6 +5,7 @@ import SpicaUploadImage from './SpicaUploadImage';
 import SpicaAuthorization from './SpicaAuthorization';
 import SpicaPaymentModal from './SpicaPaymentModal';
 import SpicaAddressModal from './SpicaAddressModal';
+import SpicaRateModal from './SpicaRateModal';
 
 export {
   SpicaScrollCategory,
@@ -13,5 +14,6 @@ export {
   SpicaUploadImage,
   SpicaAuthorization,
   SpicaPaymentModal,
-  SpicaAddressModal
+  SpicaAddressModal,
+  SpicaRateModal
 };

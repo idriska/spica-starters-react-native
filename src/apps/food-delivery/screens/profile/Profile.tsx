@@ -12,7 +12,10 @@ import {upload} from '../../../../services/ImageUpload';
 import {AuthService} from '../../services/Auth';
 import {showToastMessage} from '../../../../services/Helper';
 import {useNavigation} from '@react-navigation/native';
-import {FoodDeliveryTabParams} from '../../interfaces/interfaces';
+import {
+  FoodDeliveryProfileStackParam,
+  FoodDeliveryTabParams,
+} from '../../interfaces/interfaces';
 import {userStore} from '../../redux/store';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParam} from '../../../../interfaces/interfaces';
@@ -21,6 +24,7 @@ const unseperatedItems = [
   {
     key: 'my_orders',
     value: 'My Orders',
+    navigator: 'MyOrders',
   },
 ];
 
@@ -40,6 +44,7 @@ const changeImage = async (image: any) => {
 
 const Profile = () => {
   const appNavigation = useNavigation<FoodDeliveryTabParams>();
+  const profileNavigation = useNavigation<FoodDeliveryProfileStackParam>();
   const mainNavigation =
     useNavigation<NativeStackNavigationProp<MainStackParam>>();
 
@@ -132,6 +137,7 @@ const Profile = () => {
             seperatedItems={seperatedItems}
             unseperatedItems={unseperatedItems}
             logout={() => logout()}
+            navigateTo={(value: string) => {profileNavigation.navigate(value)}}
           />
         </View>
       ) : (
