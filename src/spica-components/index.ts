@@ -6,8 +6,12 @@ import SpicaAuthorization from './SpicaAuthorization';
 import SpicaPaymentModal from './SpicaPaymentModal';
 import SpicaAddressModal from './SpicaAddressModal';
 import SpicaRateModal from './SpicaRateModal';
+import SpicaProjectsMenu from './SpicaProjectsMenu';
+import SpicaProjectsList from './SpicaProjectsList';
 
 export {
+  SpicaProjectsMenu,
+  SpicaProjectsList,
   SpicaScrollCategory,
   SpicaProfilePicture,
   SpicaProfileItemsList,
@@ -15,5 +19,5 @@ export {
   SpicaAuthorization,
   SpicaPaymentModal,
   SpicaAddressModal,
-  SpicaRateModal
+  SpicaRateModal,
 };

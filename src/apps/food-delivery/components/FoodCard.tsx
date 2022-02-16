@@ -52,7 +52,7 @@ const FoodCard = ({data, changeCount, clicked, type}: any) => {
                   size={16}
                   color="rgb(255, 196, 0)"
                 />
-                <Text style={styles.propertie}>{rating.toFixed(1)} cal.</Text>
+                <Text style={styles.propertie}>{rating.toFixed(1)}</Text>
               </View>
             )}
             <View style={styles.flexDirectionRow}>
