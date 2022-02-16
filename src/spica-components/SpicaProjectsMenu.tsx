@@ -61,8 +61,8 @@ export default SpicaProjectsMenu;
 
 const styles = StyleSheet.create({
   backdrop: {
-    width: '100%',
-    height: '100%',
+    width: viewportWidth,
+    height: viewportHeight,
     position: 'absolute',
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
@@ -70,14 +70,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     width: 270,
     padding: 20,
-    height: '70%',
+    height: viewportHeight * 0.7,
     backgroundColor: COLORS.WHITE,
     borderTopLeftRadius: 30,
     borderBottomLeftRadius: 30,
   },
   content: {
-    width: '100%',
-    height: '100%',
+    alignSelf: 'flex-end',
+    height: viewportHeight,
     position: 'absolute',
     justifyContent: 'center',
   },
