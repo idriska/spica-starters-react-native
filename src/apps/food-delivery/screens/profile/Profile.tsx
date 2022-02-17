@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import styles from './style';
-import {SafeAreaView, Text, View} from 'react-native';
+import {SafeAreaView, View} from 'react-native';
 import {
   SpicaAuthorization,
   SpicaProfileItemsList,
@@ -8,7 +8,7 @@ import {
   SpicaUploadImage,
 } from '../../../../spica-components';
 import Modal from 'react-native-modal';
-import {upload} from '../../../../services/ImageUpload';
+import {getBufWithMeta, upload} from '../../../../services/ImageUpload';
 import {AuthService} from '../../services/Auth';
 import {showToastMessage} from '../../../../services/Helper';
 import {useNavigation} from '@react-navigation/native';
@@ -19,6 +19,7 @@ import {
 import {userStore} from '../../redux/store';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {MainStackParam} from '../../../../interfaces/interfaces';
+import {updateUser} from '../../services/DataService';
 
 const unseperatedItems = [
   {
@@ -27,20 +28,6 @@ const unseperatedItems = [
     navigator: 'MyOrders',
   },
 ];
-
-const changeImage = async (image: any) => {
-  // uri: image.path,
-  // type: image.mime,
-  // console.log(image);
-  // setLoadingImage(true);
-  // const uploadedFile = event.target.files[0];
-  const newImage: any = await upload(image).catch(err => {
-    console.log(newImage);
-  });
-  console.log('newImage', newImage);
-  // changed({ ...user, thumbnail: newImage[0].url });
-  // setLoadingImage(false);
-};
 
 const Profile = () => {
   const appNavigation = useNavigation<FoodDeliveryTabParams>();
@@ -67,7 +54,6 @@ const Profile = () => {
   const authService = new AuthService();
 
   useEffect(() => {
-    prepareSeperateItems;
     let userData = userStore.getState();
     if (userData) {
       setUser(userData);
@@ -76,12 +62,12 @@ const Profile = () => {
 
     const userSub = userStore.subscribe(() => {
       let userState: any = userStore.getState();
-      setUser(userState);
+      setUser({...userState});
     });
     return () => {
       userSub();
     };
-  }, [user]);
+  }, []);
 
   const prepareSeperateItems = (userData: any) => {
     seperatedItems.forEach(
@@ -124,11 +110,38 @@ const Profile = () => {
     mainNavigation.navigate('App');
   };
 
+  const changeImage = async (image: any) => {
+    const bufWithMeta = await getBufWithMeta(image);
+
+    let newImage: any = '';
+    let imageId;
+
+    if (!user['profile_picture']) {
+      newImage = await upload(bufWithMeta).catch(err => {
+        console.log(err);
+      });
+    } else {
+      let splitArr = user.profile_picture.split('/');
+      imageId = splitArr[splitArr.length - 1].split('?')[0];
+
+      newImage = await upload(bufWithMeta, imageId).catch(err => {
+        console.log(err);
+      });
+    }
+
+    if (newImage) {
+      user['profile_picture'] =
+        newImage.url + `&timestamp=${new Date().getTime()}`;
+      updateUser(user);
+    }
+  };
+
   return (
     <SafeAreaView>
       {user ? (
         <View style={styles.profileContainer}>
           <SpicaProfilePicture
+            thumbnail={user.profile_picture}
             imagePicker={() => {
               setModalVisible(true);
             }}
@@ -137,7 +150,9 @@ const Profile = () => {
             seperatedItems={seperatedItems}
             unseperatedItems={unseperatedItems}
             logout={() => logout()}
-            navigateTo={(value: string) => {profileNavigation.navigate(value)}}
+            navigateTo={(value: string) => {
+              profileNavigation.navigate(value);
+            }}
           />
         </View>
       ) : (
@@ -158,6 +173,9 @@ const Profile = () => {
         onSwipeComplete={() => setModalVisible(false)}>
         <SpicaUploadImage
           completed={(data: any) => {
+            if (data) {
+              changeImage(data);
+            }
             setModalVisible(false);
           }}
         />

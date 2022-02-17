@@ -4,24 +4,19 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Image,
-  SafeAreaView,
 } from 'react-native';
 import * as COLORS from '../styles/colors';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ImagePicker from 'react-native-image-crop-picker';
 
 const SpicaUploadImage = ({completed}: any) => {
   const uplodaImageHandle = async (value: string) => {
     let imageData: any;
     if (value === 'gallery') {
-      imageData = await pickSingleWithGallery(true).catch((err) => {
-        console.log("My ERROR: ", err)
-      })
+      imageData = await pickSingleWithGallery(true).catch(err => {});
     } else if (value === 'camera') {
       imageData = await pickSingleWithCamera(true);
     }
-    // completed(imageData);
+    completed(imageData);
   };
 
   const pickSingleWithGallery = (cropping: boolean) => {
