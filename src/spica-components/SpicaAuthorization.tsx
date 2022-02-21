@@ -7,7 +7,6 @@ import {SpicaInput, SpicaButton} from '../styles/styled-components';
 const SpicaAuthorization = ({login, register}: any) => {
   const [activeIndex, setActiveIndex] = useState<string>('login');
   const [showPassword, setShowPassword] = useState(false);
-
   const [credentials, setCredentials] = useState({
     email: '',
     name: '',

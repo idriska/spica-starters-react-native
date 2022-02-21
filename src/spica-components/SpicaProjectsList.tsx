@@ -34,6 +34,12 @@ const SpicaProjectsList = ({clicked}: any) => {
       icon: 'cart-outline',
       navigate: 'ECommerce',
     },
+    {
+      projectId: 'Appointment',
+      name: 'Appointment',
+      icon: 'calendar-outline',
+      navigate: 'Appointment',
+    }
   ];
 
   const renderProjects = () => {
