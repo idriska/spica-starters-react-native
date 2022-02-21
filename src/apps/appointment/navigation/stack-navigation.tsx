@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator<AppointmentStackParam>();
 const AppointmnetStackNavigator = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="AppointmentTabNavigator"
       screenOptions={{
         headerShown: false,
       }}>
