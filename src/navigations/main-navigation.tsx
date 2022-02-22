@@ -4,12 +4,12 @@ import {
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import ECommerce from '../apps/e-commerce';
 import FitnessApp from '../apps/fitness-app';
 import {MainStackParam} from '../interfaces/interfaces';
 import App from '../App';
 import FoodDeliveryTabNavigator from '../apps/food-delivery/navigation/tab-navigator';
 import {SpicaProjectsMenu} from '../spica-components';
+import ECommerceTabNavigator from '../apps/e-commerce/navigations/tab-navigator';
 
 const Stack = createNativeStackNavigator<MainStackParam>();
 
@@ -27,7 +27,7 @@ const MainStackNavigator = () => {
           component={FoodDeliveryTabNavigator}
         />
         <Stack.Screen name="FitnessApp" component={FitnessApp}/>
-        <Stack.Screen name="ECommerce" component={ECommerce} />
+        <Stack.Screen name="ECommerce" component={ECommerceTabNavigator} />
       </Stack.Navigator>
       <SpicaProjectsMenu />
     </NavigationContainer>
