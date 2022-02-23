@@ -9,7 +9,7 @@ import {MainStackParam} from '../interfaces/interfaces';
 import App from '../App';
 import FoodDeliveryTabNavigator from '../apps/food-delivery/navigation/tab-navigator';
 import {SpicaProjectsMenu} from '../spica-components';
-import ECommerceTabNavigator from '../apps/e-commerce/navigations/tab-navigator';
+import ECommerceStackNavigator from '../apps/e-commerce/navigations/stack-navigator';
 
 const Stack = createNativeStackNavigator<MainStackParam>();
 
@@ -27,7 +27,7 @@ const MainStackNavigator = () => {
           component={FoodDeliveryTabNavigator}
         />
         <Stack.Screen name="FitnessApp" component={FitnessApp}/>
-        <Stack.Screen name="ECommerce" component={ECommerceTabNavigator} />
+        <Stack.Screen name="ECommerce" component={ECommerceStackNavigator} />
       </Stack.Navigator>
       <SpicaProjectsMenu />
     </NavigationContainer>

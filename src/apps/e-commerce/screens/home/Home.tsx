@@ -1,9 +1,12 @@
 import styles from './styles';
 import React, {useEffect, useState} from 'react';
-import {SafeAreaView, Text, Image, View, ScrollView} from 'react-native';
+import {SafeAreaView, ScrollView} from 'react-native';
 import {Campaign_Product, Category} from '../../services/bucket';
 import {getCapaignProducts, getCategories} from '../../services/DataService';
 import {Searchbar} from 'react-native-paper';
+import {CampaignProducItem, CategoryItem} from '../../components';
+import {ECommerceStackParam} from '../../interfaces/interfaces';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 const categories = [
   {
@@ -32,7 +35,7 @@ const categories = [
   },
 ];
 
-const Home = () => {
+const Home = ({navigation}: any) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [capaignProducts, setCapaignProducts] = useState<Campaign_Product[]>(
     [],
@@ -50,20 +53,27 @@ const Home = () => {
 
   const onChangeSearch = (query: string) => setSearchQuery(query);
 
+  const toProducts = (type: string, id: string) => {
+    navigation.navigate('Products', {type: type, id: id});
+  };
+
   const renderCategories = () => {
     return categories.map((item, index) => (
-      <View style={styles.categoryItem} key={`categori-${index}`}>
-        <Image source={{uri: item.img}} style={styles.categoryImg} />
-        <Text style={styles.categoryName}>{item.name}</Text>
-      </View>
+      <CategoryItem
+        key={`category-${index}`}
+        data={item}
+        onClick={id => toProducts('category', id)}
+      />
     ));
   };
 
   const renderCampaignProducts = () => {
     return capaignProducts.map((item, index) => (
-      <View style={styles.campaignItem} key={`campaign-${index}`}>
-        <Image source={{uri: item.img}} style={styles.campaignImg} />
-      </View>
+      <CampaignProducItem
+        key={`capmaign-${index}`}
+        data={item}
+        onClick={id => toProducts('campaign', id)}
+      />
     ));
   };
 

@@ -1,11 +1,10 @@
-
 // import {setFoodsAction} from '../redux/food/actions';
 // import {clearBasketAction, setBasketAction} from '../redux/basket/actions';
 import {
   updateUserAction,
   updateUserAddressesAction,
 } from '../redux/user/actions';
-import { campaign_product, category, initialize } from './bucket';
+import {campaign_product, category, initialize, product} from './bucket';
 
 // export const getFoods = (catId: any = undefined) => {
 //   initialize({
@@ -38,6 +37,23 @@ export const getCapaignProducts = async () => {
   });
   return campaign_product.getAll();
 };
+
+export const getCapaignProduct = async (id: string) => {
+  initialize({
+    apikey: 'axfb9k1akx06fe2u',
+  });
+  return campaign_product.get(id, {queryParams: {relation: true}});
+};
+
+export const getProducts = async (filter?: {is_available: true}, sort?: {}) => {
+  initialize({
+    apikey: 'axfb9k1akx06fe2u',
+  });
+  return product.getAll({
+    queryParams: {filter: {...filter}, sort: {...sort}},
+  });
+};
+
 // export const getBasket = async () => {
 //   initialize({
 //     apikey: 'axfb9k1akx06fe2u',
