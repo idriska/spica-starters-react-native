@@ -13,10 +13,11 @@ import * as COLORS from '../../../styles/colors';
 
 interface IProps {
   data: Product;
+  onClick: () => void;
 }
-const ProductCard: FC<IProps> = ({data}) => {
+const ProductCard: FC<IProps> = ({data, onClick}) => {
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => onClick()}>
       <Image source={{uri: data.cover_image}} style={styles.img} />
       <View style={styles.top}>
         <Text numberOfLines={1} style={styles.title}>
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   img: {
     width: '100%',
     height: '65%',
-    borderRadius: 10
+    borderRadius: 10,
   },
   title: {
     width: vpWidth * 0.5 - 65,

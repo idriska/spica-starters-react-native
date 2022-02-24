@@ -54,6 +54,13 @@ export const getProducts = async (filter?: {is_available: true}, sort?: {}) => {
   });
 };
 
+export const getProduct = async (id: string) => {
+  initialize({
+    apikey: 'axfb9k1akx06fe2u',
+  });
+  return product.get(id, {queryParams: {relation: true}});
+};
+
 // export const getBasket = async () => {
 //   initialize({
 //     apikey: 'axfb9k1akx06fe2u',

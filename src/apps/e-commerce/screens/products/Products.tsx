@@ -4,7 +4,7 @@ import {ProductCard} from '../../components';
 import {Product} from '../../services/bucket';
 import {getCapaignProduct, getProducts} from '../../services/DataService';
 
-const Products = ({route}: any) => {
+const Products = ({route, navigation}: any) => {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
@@ -21,6 +21,10 @@ const Products = ({route}: any) => {
     }
   }, []);
 
+  const toProductDetails = (id: string) => {
+    navigation.navigate('ProductDetails', {id: id});
+  };
+
   return (
     <SafeAreaView>
       <FlatList
@@ -30,7 +34,9 @@ const Products = ({route}: any) => {
         data={products}
         numColumns={2}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => <ProductCard data={item} />}></FlatList>
+        renderItem={({item}) => (
+          <ProductCard data={item} onClick={() => toProductDetails(item._id as string)} />
+        )}></FlatList>
     </SafeAreaView>
   );
 };
