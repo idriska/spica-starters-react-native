@@ -45,10 +45,13 @@ export const getCapaignProduct = async (id: string) => {
   return campaign_product.get(id, {queryParams: {relation: true}});
 };
 
-export const getProducts = async (filter?: {is_available: true}, sort?: {}) => {
+export const getProducts = async (filter?: {}, sort?: {}) => {
   initialize({
     apikey: 'axfb9k1akx06fe2u',
   });
+
+  filter = {...filter, is_available: true};
+  sort = {...sort};
   return product.getAll({
     queryParams: {filter: {...filter}, sort: {...sort}},
   });

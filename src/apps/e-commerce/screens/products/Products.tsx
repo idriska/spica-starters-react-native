@@ -15,7 +15,7 @@ const Products = ({route, navigation}: any) => {
         })
         .catch(err => console.log('ERROR', err));
     } else {
-      getProducts().then(res => {
+      getProducts({categories: route.params.id}).then(res => {
         setProducts(res as Product[]);
       });
     }
