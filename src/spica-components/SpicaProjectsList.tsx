@@ -34,6 +34,12 @@ const SpicaProjectsList = ({clicked}: any) => {
       icon: 'cart-outline',
       navigate: 'ECommerce',
     },
+    {
+      projectId: 'StoreListing',
+      name: 'StoreListing Application',
+      icon: 'md-business-outline',
+      navigate: 'StoreListing',
+    },
   ];
 
   const renderProjects = () => {
