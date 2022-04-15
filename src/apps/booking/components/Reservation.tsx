@@ -1,46 +1,131 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, View, Pressable, Button, Modal, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { makeReservation, getAllRooms } from '../services/DataService';
+import { Room } from '../services/bucket';
 
 export default function Reservation() {
 
-    const [selectedRoom, setSelectedRoom] = useState('standart');
+    const [rooms, setRooms] = useState<Room[]>([])
+    const [selectedRoom, setSelectedRoom] = useState(rooms[0]?._id);
     const [checkIn, setCheckIn] = useState(new Date())
     const [checkInShow, setCheckInShow] = useState(false)
 
     const [checkOut, setCheckOut] = useState(checkIn)
     const [checkOutShow, setCheckOutShow] = useState(false)
+    const [validation, setValidation] = useState({
+        name: false,
+        mail: false,
+        phone_number: false,
+        adult: false,
+        children: false,
+    })
 
-
+    const [reservation, setReservation] = useState(
+        {
+            name: "a",
+            mail: "",
+            phone_number: "",
+            adult: Number(),
+            children: Number(),
+            check_in: new Date,
+            check_out: new Date,
+            room: rooms[0]?._id
+        }
+    )
 
     const setCheckInFunc = (date: any) => {
         if (date) {
             setCheckIn(new Date(date))
+            setReservation({ ...reservation, check_in: (new Date(date)) })
         }
     }
     const setCheckOutFunc = (date: any) => {
         if (date) {
             setCheckOut(new Date(date))
+            setReservation({ ...reservation, check_out: (new Date(date)) })
+        }
+    }
+    const validations = ({mail,name,phone_number,adult,children}:any) => {
+        const mailVal = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;        
+        const phoneVal = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;        
+        console.log('_--------------');
+                
+        // setTimeout(()=>{
+            if (!mail || mail) {
+                if(mailVal.test(mail) === false){
+                    setValidation(prev=>{return{...prev,mail:true}})
+                }
+                else {
+                    setValidation(prev=>{return{...prev,mail:false}})
+                }
+            }
+            if (!name || name) {
+                if(name.length){
+                    setValidation(prev=>{return{...prev,name:false}})
+                }
+                else {
+                    setValidation(prev=>{return{...prev,name:true}})
+                }
+            }
+            if (!adult || adult) {
+                if(adult>=1){
+                    setValidation(prev=>{return{...prev,adult:false}})
+                }
+                else {
+                    setValidation(prev=>{return{...prev,adult:true}})
+                }
+            }
+            if (!children || children) {
+                if(children>=1){
+                    setValidation(prev=>{return{...prev,children:false}})
+                }
+                else {
+                    setValidation(prev=>{return{...prev,children:true}})
+                }
+            }
+            if (!phone_number || phone_number) {
+                if(phoneVal.test(phone_number) === false){
+                    setValidation(prev=>{return{...prev,phone_number:true}})
+                }
+                else {
+                    setValidation(prev=>{return{...prev,phone_number:false}})
+                }
+            }
+        // },800)
+        
+        console.log("RES", reservation, validation)
+        // setTimeout(()=>{
+            if(validation.adult||validation.children||validation.mail||validation.name||validation.phone_number){
+                // makeReservation(reservation)
+                Alert.alert('SAA')
+            }
+        // },2000)
+    }
+    
+    const reservationFunc = () => {
+        if(!reservation.adult&&!reservation.check_in&&!reservation.check_out&&!reservation.children&&!reservation.mail&&!reservation.name&&!reservation.phone_number&&!reservation.room){
+            // makeReservation(reservation)
         }
     }
 
-    const adultChange = (e: any) => {
-        console.log(e);
-
-        e.replace(/[^0-9]/g, '')
-
-    }
+    useEffect(() => {
+        getAllRooms().then(res => {
+            setRooms(res as Room[])
+        })
+        // validations(reservation)
+    }, [])
 
     return (
         <View style={styles.mainBox}>
             <Text style={styles.title}>Reservation</Text>
             <View >
-                <TextInput style={styles.input} placeholder='Your Name' />
-                <TextInput style={styles.input} placeholder='Email' />
-                <TextInput style={styles.input} placeholder='Phone' />
-                <TextInput style={styles.input} placeholder='Adult' onChangeText={(e) => { adultChange(e) }} />
-                <TextInput style={styles.input} placeholder='Child' />
+                <TextInput placeholderTextColor={validation.name?'red':'gray'} style={{...styles.input,borderColor:`${validation.name?'red':'#dcdcdc'}`}} placeholder='Your Name' onChangeText={(e) => { setReservation({ ...reservation, name: e }) }} />
+                <TextInput placeholderTextColor={validation.mail?'red':'gray'} style={{...styles.input,borderColor:`${validation.mail?'red':'#dcdcdc'}`}} placeholder='mail' onChangeText={(e) => { setReservation({ ...reservation, mail: e })}} />
+                <TextInput style={{...styles.input,borderColor:`${validation.phone_number?'red':'#dcdcdc'}`}} placeholder='Phone' onChangeText={(e) => { setReservation({ ...reservation, phone_number: e }) }} />
+                <TextInput keyboardType = 'number-pad' style={{...styles.input,borderColor:`${validation.adult?'red':'#dcdcdc'}`}} placeholder='Adult' onChangeText={(e) => { setReservation({ ...reservation, adult: Number(e) }) }} />
+                <TextInput keyboardType = 'number-pad' style={{...styles.input,borderColor:`${validation.children?'red':'#dcdcdc'}`}} placeholder='Child' onChangeText={(e) => { setReservation({ ...reservation, children: Number(e) }) }} />
                 <View style={styles.dateBox}>
                     <Pressable onPress={() => setCheckInShow(!checkInShow)} style={{ width: '49%', marginRight: '2%' }}>
                         <TextInput editable={false} style={styles.dateInput} placeholder={checkIn ? (checkIn.toDateString()) : 'Check in'} />
@@ -52,16 +137,15 @@ export default function Reservation() {
                 <View style={styles.roomPicker}>
                     <Picker
                         selectedValue={selectedRoom}
-                        onValueChange={(itemValue, itemIndex) =>
-                            setSelectedRoom(itemValue)
+                        onValueChange={(itemValue) => { setSelectedRoom(itemValue); setReservation({ ...reservation, room: itemValue }) }
                         }>
-                        <Picker.Item label="Standart" value="standart" />
-                        <Picker.Item label="Family Suit" value="familysuit" />
+                        {rooms.map((room, index) => {
+                            return <Picker.Item key={index} label={room.name} value={room._id} />
+                        })}
                     </Picker>
                 </View>
-                {/* <Button title='Make A Reservation' onPress={() => setCheckInShow(!checkInShow)} ></Button> */}
-                <Pressable style={styles.button}>
-                    <Text style={{color:'white',fontWeight:'700'}}>Make A Reservation</Text>
+                <Pressable style={styles.button} onPress={() => { validations(reservation) }}>
+                    <Text style={{ color: 'white', fontWeight: '700' }}>Make A Reservation</Text>
                 </Pressable>
 
                 {checkInShow && (
@@ -115,7 +199,7 @@ const styles = StyleSheet.create({
     button: {
         height: 50,
         marginTop: 10,
-        backgroundColor: '#007AFF',
+        backgroundColor:'#007AFF',
         alignItems: 'center',
         display: 'flex',
         justifyContent: 'center',

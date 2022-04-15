@@ -1,40 +1,120 @@
-import React from 'react';
-import { Button, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Reservation from '../components/Reservation';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Footer from '../components/Footer';
+import { getRooms, getActivities, getSiteConfigurations, makeReservation } from '../services/DataService';
+import { Room, Activities, Site_Configurations } from '../services/bucket';
 
-export default function Home() {
+export default function Home({ navigation }: any) {
+    const [rooms, setRooms] = useState<Room[]>([])
+    const [activities, setActivities] = useState<Activities[]>([])
+    const [siteConfigurations, setSiteConfigurations] = useState<Site_Configurations[]>([])
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+        const request = async () => {
+            await getRooms().then(res => {
+                setRooms(res as Room[])
+            })
+            await getActivities().then(res => {
+                setActivities(res as Activities[])
+            })
+            await getSiteConfigurations().then(res => {
+                setSiteConfigurations(res as Site_Configurations[])
+            })
+            setLoading(!loading)
+        }
+        request()
+    }, [])
+
     return (
         <ScrollView style={styles.mainBox}>
-            <View style={{borderBottomWidth:2,borderColor:'#dcdcdc',marginBottom:20,display:'flex',flexDirection:'row',justifyContent:'space-between'}}>
-                <Ionicons name='menu' size={30} />
-                <Image style={{height:40,width:40}} source={{uri:'https://storage.googleapis.com/download/storage/v1/b/hq-spica-starters-7229b/o/61c1c3210ba24b002d19b538?alt=media'}} />
+            {loading ? <ActivityIndicator style={{marginVertical:'auto'}} size="large" color="#0000ff" /> : <View><View>
+                <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 200 }}>
+                    {siteConfigurations[0]?.homepage?.slides?.map((slide, index) => {
+                        return <Image key={index} style={{ height: 200 }} source={{ uri: slide }} />
+                    })}
+                </ScrollView>
             </View>
-            <View>
-                <ScrollView pagingEnabled style={{ width: '100%', height: 200 }}>
-                    <Image style={{ height: 200 }} source={{ uri: 'https://storage.googleapis.com/download/storage/v1/b/hq-spica-starters-7229b/o/61c1c3210ba24b002d19b536?alt=media' }} />
-                    <Image style={{ height: 200 }} source={{ uri: 'https://storage.googleapis.com/download/storage/v1/b/hq-spica-starters-7229b/o/61c1c08d0ba24b002d19b46b?alt=media' }} />
+                <Reservation />
+                <View>
+                    <Text style={styles.title}>Rooms & Suits</Text>
+                    {rooms.map((room, index) => {
+                        return (
+                            <View key={index} style={{ backgroundColor: '#dcdcdc40', marginBottom: 10 }}>
+                                <Image style={{ height: 200 }} source={{ uri: room.head_image }} />
+                                <Text style={styles.header}>{room.name}</Text>
+                                <Text style={styles.description}>{room.description}</Text>
+                                <Pressable style={styles.pressable} onPress={() => { navigation.navigate('Details', { room }) }}>
+                                    <Text style={{ fontSize: 20, fontWeight: '700' }}>Explore <Ionicons name='arrow-forward-outline' /></Text>
+                                </Pressable>
+                            </View>
+                        );
+                    })}
+
+                </View>
+                <View>
+                    <Text style={styles.title}>Activity & Fun</Text>
+                    <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 300 }}>
+                        {activities.map((activity, index) => {
+                            return (
+                                <View key={index} style={{ height: 300 }}>
+                                    <Image style={{ height: 200 }} source={{ uri: activity.images[0] }} />
+                                    <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: '700', marginVertical: 10 }}>{activity.name}</Text>
+                                    <Text numberOfLines={2} style={{ textAlign: 'center' }}>{activity.description}</Text>
+                                </View>
+                            );
+                        })}
+                    </ScrollView>
+                </View>
+                <View>
+                    <Text style={styles.title}>About Us</Text>
+                    <Text style={{ textAlign: 'center', marginBottom: 30 }}>{siteConfigurations[0]?.about}</Text>
+                </View>
+                <Footer /></View>}
+            {/* <View>
+                <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 200 }}>
+                    {siteConfigurations[0]?.homepage?.slides?.map((slide, index) => {
+                        return <Image key={index} style={{ height: 200 }} source={{ uri: slide }} />
+                    })}
                 </ScrollView>
             </View>
             <Reservation />
             <View>
                 <Text style={styles.title}>Rooms & Suits</Text>
-                <View style={{ backgroundColor: '#dcdcdc40' }}>
-                    <Image style={{ height: 200 }} source={{ uri: 'https://storage.googleapis.com/download/storage/v1/b/hq-spica-starters-7229b/o/61c1c4db0ba24b002d19b60c?alt=media' }} />
-                    <Text style={styles.header}>Standard Garden View Room</Text>
-                    <Text style={styles.description}>Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit.</Text>
-                    <Pressable style={styles.pressable}>
-                        <Text style={{ fontSize: 20, fontWeight: '700' }}>Explore <Ionicons name='arrow-forward-outline' /></Text>
-                    </Pressable>
-                </View>
+                {rooms.map((room, index) => {
+                    return (
+                        <View key={index} style={{ backgroundColor: '#dcdcdc40', marginBottom: 10 }}>
+                            <Image style={{ height: 200 }} source={{ uri: room.head_image }} />
+                            <Text style={styles.header}>{room.name}</Text>
+                            <Text style={styles.description}>{room.description}</Text>
+                            <Pressable style={styles.pressable} onPress={() => { navigation.navigate('Details', { room }) }}>
+                                <Text style={{ fontSize: 20, fontWeight: '700' }}>Explore <Ionicons name='arrow-forward-outline' /></Text>
+                            </Pressable>
+                        </View>
+                    );
+                })}
 
             </View>
             <View>
-                <Text style={styles.title}>About Us</Text>
-                <Text style={{ textAlign: 'center', marginBottom: 30 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut laoreet orci at fermentum euismod. Quisque quis erat nisl. Sed dapibus nec mauris tempor iaculis. Maecenas suscipit turpis velit, vel pretium sapien vulputate id. Sed vehicula dui et enim condimentum, in molestie lectus venenatis. Praesent a velit ut nulla vestibulum cursus id in ex. Maecenas tellus metus, sagittis eu ligula eget, mollis suscipit ex. Fusce a porta ipsum. Pellentesque nibh orci, commodo in purus ullamcorper, placerat consectetur lacus. Ut ornare hendrerit augue, lobortis mollis velit viverra ut.</Text>
+                <Text style={styles.title}>Activity & Fun</Text>
+                <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 300 }}>
+                    {activities.map((activity, index) => {
+                        return (
+                            <View key={index} style={{ height: 300 }}>
+                                <Image style={{ height: 200 }} source={{ uri: activity.images[0] }} />
+                                <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: '700', marginVertical: 10 }}>{activity.name}</Text>
+                                <Text numberOfLines={2} style={{ textAlign: 'center' }}>{activity.description}</Text>
+                            </View>
+                        );
+                    })}
+                </ScrollView>
             </View>
-            <Footer />
+            <View>
+                <Text style={styles.title}>About Us</Text>
+                <Text style={{ textAlign: 'center', marginBottom: 30 }}>{siteConfigurations[0]?.about}</Text>
+            </View>
+            <Footer /> */}
         </ScrollView>
     );
 }
