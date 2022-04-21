@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import MapView, { Marker } from 'react-native-maps';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Footer from "../components/Footer";
@@ -9,14 +9,21 @@ import { getSiteConfigurations } from "../services/DataService";
 export default function Contact() {
 
     const [siteConfigurations, setSiteConfigurations] = useState<Site_Configurations[]>([])
+    const [loading,setLoading]= useState(true)
+
     useEffect(() => {
-        getSiteConfigurations().then(res => {
-            setSiteConfigurations(res as Site_Configurations[])
-        })
+        const request = async () => {
+            await getSiteConfigurations().then(res => {
+                setSiteConfigurations(res as Site_Configurations[])
+            })
+            setLoading(false)
+        }
+        request()
     }, [])
 
     return (
-        <ScrollView style={styles.mainBox}>
+        <View>
+            {!loading? <ScrollView style={styles.mainBox}>
             <MapView
                 style={styles.map}
                 initialRegion={{
@@ -69,7 +76,8 @@ export default function Contact() {
                 </View>
             </View>
             <Footer />
-        </ScrollView>
+        </ScrollView>:<ActivityIndicator style={{marginVertical:'50%'}} size="large" color="#0000ff" />}
+        </View>
     );
 }
 

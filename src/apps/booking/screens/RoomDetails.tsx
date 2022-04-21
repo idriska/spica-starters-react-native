@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 export default function RoomDetails({route,navigation}:any) {
 
     const { room } = route.params;
+    
     navigation.setOptions({ title: room.name })
     const [mainImage, setMainImage] = useState(room.head_image)
 

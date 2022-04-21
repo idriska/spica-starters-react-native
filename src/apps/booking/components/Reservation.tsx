@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, View, Pressable, Button, Modal, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Pressable, Button, Alert } from 'react-native';
+import { useForm, Controller } from "react-hook-form";
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { makeReservation, getAllRooms } from '../services/DataService';
@@ -9,104 +10,52 @@ export default function Reservation() {
 
     const [rooms, setRooms] = useState<Room[]>([])
     const [selectedRoom, setSelectedRoom] = useState(rooms[0]?._id);
+    const [loading,setLoading]= useState(false)
+    const { control, reset, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: {
+            name: "",
+            mail: "",
+            phone_number: "",
+            adult: "",
+            children: ""
+        }
+    });
     const [checkIn, setCheckIn] = useState(new Date())
     const [checkInShow, setCheckInShow] = useState(false)
 
-    const [checkOut, setCheckOut] = useState(checkIn)
+    const [checkOut, setCheckOut] = useState(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000))
     const [checkOutShow, setCheckOutShow] = useState(false)
-    const [validation, setValidation] = useState({
-        name: false,
-        mail: false,
-        phone_number: false,
-        adult: false,
-        children: false,
-    })
 
     const [reservation, setReservation] = useState(
         {
-            name: "a",
+            name: "",
             mail: "",
             phone_number: "",
             adult: Number(),
             children: Number(),
             check_in: new Date,
-            check_out: new Date,
+            check_out: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000),
             room: rooms[0]?._id
         }
     )
+    useEffect(() => {
+        const diffDays =(Number(checkOut) - Number(checkIn) )/( 24 * 60 * 60 * 1000)
+        if(diffDays<2){
+            setCheckOutFunc(new Date(Number(checkIn) + 2 * 24 * 60 * 60 * 1000))    
+        }
+
+    }, [checkIn,checkOut])
 
     const setCheckInFunc = (date: any) => {
         if (date) {
             setCheckIn(new Date(date))
-            setReservation({ ...reservation, check_in: (new Date(date)) })
+            setReservation(prev=>{return { ...prev, check_in: (new Date(date)) }})
         }
     }
     const setCheckOutFunc = (date: any) => {
         if (date) {
             setCheckOut(new Date(date))
-            setReservation({ ...reservation, check_out: (new Date(date)) })
-        }
-    }
-    const validations = ({mail,name,phone_number,adult,children}:any) => {
-        const mailVal = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;        
-        const phoneVal = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;        
-        console.log('_--------------');
-                
-        // setTimeout(()=>{
-            if (!mail || mail) {
-                if(mailVal.test(mail) === false){
-                    setValidation(prev=>{return{...prev,mail:true}})
-                }
-                else {
-                    setValidation(prev=>{return{...prev,mail:false}})
-                }
-            }
-            if (!name || name) {
-                if(name.length){
-                    setValidation(prev=>{return{...prev,name:false}})
-                }
-                else {
-                    setValidation(prev=>{return{...prev,name:true}})
-                }
-            }
-            if (!adult || adult) {
-                if(adult>=1){
-                    setValidation(prev=>{return{...prev,adult:false}})
-                }
-                else {
-                    setValidation(prev=>{return{...prev,adult:true}})
-                }
-            }
-            if (!children || children) {
-                if(children>=1){
-                    setValidation(prev=>{return{...prev,children:false}})
-                }
-                else {
-                    setValidation(prev=>{return{...prev,children:true}})
-                }
-            }
-            if (!phone_number || phone_number) {
-                if(phoneVal.test(phone_number) === false){
-                    setValidation(prev=>{return{...prev,phone_number:true}})
-                }
-                else {
-                    setValidation(prev=>{return{...prev,phone_number:false}})
-                }
-            }
-        // },800)
-        
-        console.log("RES", reservation, validation)
-        // setTimeout(()=>{
-            if(validation.adult||validation.children||validation.mail||validation.name||validation.phone_number){
-                // makeReservation(reservation)
-                Alert.alert('SAA')
-            }
-        // },2000)
-    }
-    
-    const reservationFunc = () => {
-        if(!reservation.adult&&!reservation.check_in&&!reservation.check_out&&!reservation.children&&!reservation.mail&&!reservation.name&&!reservation.phone_number&&!reservation.room){
-            // makeReservation(reservation)
+            setReservation(prev =>{return { ...prev, check_out: (new Date(date)) }})
         }
     }
 
@@ -114,18 +63,117 @@ export default function Reservation() {
         getAllRooms().then(res => {
             setRooms(res as Room[])
         })
-        // validations(reservation)
     }, [])
+
+    const onSubmit = async (data: any) => { 
+        setLoading(true)
+        data.adult = Number(data.adult)
+        data.children = Number(data.children)
+        await makeReservation({...reservation,...data})
+        reset({name:'',phone_number:'',adult:'',mail:'',children:''})
+        Alert.alert('Reservation Created')
+        setLoading(false)
+    }
 
     return (
         <View style={styles.mainBox}>
             <Text style={styles.title}>Reservation</Text>
             <View >
-                <TextInput placeholderTextColor={validation.name?'red':'gray'} style={{...styles.input,borderColor:`${validation.name?'red':'#dcdcdc'}`}} placeholder='Your Name' onChangeText={(e) => { setReservation({ ...reservation, name: e }) }} />
-                <TextInput placeholderTextColor={validation.mail?'red':'gray'} style={{...styles.input,borderColor:`${validation.mail?'red':'#dcdcdc'}`}} placeholder='mail' onChangeText={(e) => { setReservation({ ...reservation, mail: e })}} />
-                <TextInput style={{...styles.input,borderColor:`${validation.phone_number?'red':'#dcdcdc'}`}} placeholder='Phone' onChangeText={(e) => { setReservation({ ...reservation, phone_number: e }) }} />
-                <TextInput keyboardType = 'number-pad' style={{...styles.input,borderColor:`${validation.adult?'red':'#dcdcdc'}`}} placeholder='Adult' onChangeText={(e) => { setReservation({ ...reservation, adult: Number(e) }) }} />
-                <TextInput keyboardType = 'number-pad' style={{...styles.input,borderColor:`${validation.children?'red':'#dcdcdc'}`}} placeholder='Child' onChangeText={(e) => { setReservation({ ...reservation, children: Number(e) }) }} />
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                    }}
+                    render={({ field: { onChange, onBlur,value} }) => (
+                        <TextInput
+                            style={styles.input}
+                            value={value}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Your Name"
+                        />
+                    )}
+                    name="name"
+                />
+                {errors.name && <Text style={styles.error}>This is required.</Text>}
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                        pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g
+                    }}
+                    render={({ field: { onChange, onBlur,value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            value={value}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Mail"
+                        />
+                    )}
+                    name="mail"
+                />
+                {errors.mail && <Text style={styles.error}>Must be valid.</Text>}
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                        pattern: /^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g
+                    }}
+                    render={({ field: { onChange, onBlur,value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            value={value}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Phone"
+                        />
+                    )}
+                    name="phone_number"
+                />
+                {errors.phone_number && <Text style={styles.error}>Must be valid.</Text>}
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                        pattern: /^[0-9]*$/,
+                        minLength:1,
+                        min:0
+                    }}
+                    render={({ field: { onChange, onBlur,value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            value={value}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Adult"
+                            keyboardType='number-pad'
+                        />
+                    )}
+                    name="adult"
+                />
+                {errors.adult && <Text style={styles.error}>This is required.</Text>}
+                <Controller
+                    control={control}
+                    rules={{
+                        required: true,
+                        pattern: /^[0-9]*$/,
+                        min:0,
+                        minLength:1
+                    }}
+                    render={({ field: { onChange, onBlur,value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            value={value}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            placeholder="Children"
+                            keyboardType='number-pad'
+                        />
+                    )}
+                    name="children"
+                />
+                {errors.children && <Text style={styles.error}>This is required.</Text>}
                 <View style={styles.dateBox}>
                     <Pressable onPress={() => setCheckInShow(!checkInShow)} style={{ width: '49%', marginRight: '2%' }}>
                         <TextInput editable={false} style={styles.dateInput} placeholder={checkIn ? (checkIn.toDateString()) : 'Check in'} />
@@ -134,7 +182,7 @@ export default function Reservation() {
                         <TextInput editable={false} style={styles.dateInput} placeholder={checkOut ? (checkOut.toDateString()) : 'Check Out'} />
                     </Pressable>
                 </View>
-                <View style={styles.roomPicker}>
+                <View style={{...styles.roomPicker,marginBottom:10}}>
                     <Picker
                         selectedValue={selectedRoom}
                         onValueChange={(itemValue) => { setSelectedRoom(itemValue); setReservation({ ...reservation, room: itemValue }) }
@@ -144,23 +192,19 @@ export default function Reservation() {
                         })}
                     </Picker>
                 </View>
-                <Pressable style={styles.button} onPress={() => { validations(reservation) }}>
-                    <Text style={{ color: 'white', fontWeight: '700' }}>Make A Reservation</Text>
-                </Pressable>
-
                 {checkInShow && (
                     <DateTimePicker onChange={(e) => {
                         setCheckInShow(!checkInShow); setCheckInFunc(e.nativeEvent.timestamp);
-                    }} value={checkIn} minimumDate={checkIn} />
+                    }} value={checkIn} minimumDate={new Date(Date.now())} />
                 )}
 
                 {checkOutShow && (
                     <DateTimePicker onChange={(e) => {
                         setCheckOutShow(!checkOutShow); setCheckOutFunc(e.nativeEvent.timestamp);
-                    }} value={checkOut} minimumDate={checkIn} />
+                    }} value={checkOut} minimumDate={new Date(Number(checkIn) + 2 * 24 * 60 * 60 * 1000)} />
                 )}
+                <Button disabled={loading} title='Make A Reservation' onPress={handleSubmit(onSubmit)} />
             </View>
-
         </View>
     );
 }
@@ -196,19 +240,15 @@ const styles = StyleSheet.create({
         borderColor: '#dcdcdc',
         paddingHorizontal: 12
     },
-    button: {
-        height: 50,
-        marginTop: 10,
-        backgroundColor:'#007AFF',
-        alignItems: 'center',
-        display: 'flex',
-        justifyContent: 'center',
-        borderRadius: 6
-    },
     roomPicker: {
         borderColor: '#dcdcdc',
         borderWidth: 1,
         borderRadius: 6,
         marginTop: 10
+    },
+    error: {
+        color: 'red',
+        marginLeft: 2,
+        fontSize: 10
     }
 })

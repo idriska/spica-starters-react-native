@@ -22,14 +22,14 @@ export default function Home({ navigation }: any) {
             await getSiteConfigurations().then(res => {
                 setSiteConfigurations(res as Site_Configurations[])
             })
-            setLoading(!loading)
+            setLoading(false)
         }
         request()
     }, [])
 
     return (
         <ScrollView style={styles.mainBox}>
-            {loading ? <ActivityIndicator style={{marginVertical:'auto'}} size="large" color="#0000ff" /> : <View><View>
+            {loading ? <ActivityIndicator style={{marginVertical:'50%'}} size="large" color="#0000ff" /> : <View><View>
                 <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 200 }}>
                     {siteConfigurations[0]?.homepage?.slides?.map((slide, index) => {
                         return <Image key={index} style={{ height: 200 }} source={{ uri: slide }} />
@@ -72,49 +72,6 @@ export default function Home({ navigation }: any) {
                     <Text style={{ textAlign: 'center', marginBottom: 30 }}>{siteConfigurations[0]?.about}</Text>
                 </View>
                 <Footer /></View>}
-            {/* <View>
-                <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 200 }}>
-                    {siteConfigurations[0]?.homepage?.slides?.map((slide, index) => {
-                        return <Image key={index} style={{ height: 200 }} source={{ uri: slide }} />
-                    })}
-                </ScrollView>
-            </View>
-            <Reservation />
-            <View>
-                <Text style={styles.title}>Rooms & Suits</Text>
-                {rooms.map((room, index) => {
-                    return (
-                        <View key={index} style={{ backgroundColor: '#dcdcdc40', marginBottom: 10 }}>
-                            <Image style={{ height: 200 }} source={{ uri: room.head_image }} />
-                            <Text style={styles.header}>{room.name}</Text>
-                            <Text style={styles.description}>{room.description}</Text>
-                            <Pressable style={styles.pressable} onPress={() => { navigation.navigate('Details', { room }) }}>
-                                <Text style={{ fontSize: 20, fontWeight: '700' }}>Explore <Ionicons name='arrow-forward-outline' /></Text>
-                            </Pressable>
-                        </View>
-                    );
-                })}
-
-            </View>
-            <View>
-                <Text style={styles.title}>Activity & Fun</Text>
-                <ScrollView nestedScrollEnabled={true} pagingEnabled style={{ width: '100%', height: 300 }}>
-                    {activities.map((activity, index) => {
-                        return (
-                            <View key={index} style={{ height: 300 }}>
-                                <Image style={{ height: 200 }} source={{ uri: activity.images[0] }} />
-                                <Text style={{ textAlign: 'center', fontSize: 18, fontWeight: '700', marginVertical: 10 }}>{activity.name}</Text>
-                                <Text numberOfLines={2} style={{ textAlign: 'center' }}>{activity.description}</Text>
-                            </View>
-                        );
-                    })}
-                </ScrollView>
-            </View>
-            <View>
-                <Text style={styles.title}>About Us</Text>
-                <Text style={{ textAlign: 'center', marginBottom: 30 }}>{siteConfigurations[0]?.about}</Text>
-            </View>
-            <Footer /> */}
         </ScrollView>
     );
 }
@@ -157,5 +114,5 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'center',
         marginBottom: 10
-    }
+    },
 })
