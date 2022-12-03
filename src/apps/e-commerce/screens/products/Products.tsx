@@ -6,7 +6,7 @@ import {getCapaignProduct, getProducts} from '../../services/DataService';
 import Modal from 'react-native-modal';
 import {SpicaSortModal} from '../../../../spica-components';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import styles from './styles';
+import styles from './style';
 
 const sortItems = [
   {title: 'Highest Price', key: 'highest_price'},
@@ -17,7 +17,7 @@ const sortItems = [
 
 const Products = ({route, navigation}: any) => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [showSortModal, setShowSortModal] = useState(true);
+  const [showSortModal, setShowSortModal] = useState(false);
   const [sortQuery, setSortQuery] = useState({});
 
   useEffect(() => {

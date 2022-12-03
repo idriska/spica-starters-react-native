@@ -10,12 +10,14 @@ import {
 } from 'react-native';
 import {Product} from '../../services/bucket';
 import {getProduct} from '../../services/DataService';
-import styles from './styles';
+import styles from './style';
 import RenderHtml from 'react-native-render-html';
+import {basketStore, userStore} from '../../redux/store';
+import { setBasketItemAction } from '../../redux/basket/actions';
 
 const {width: vpWidth, height: vpHeight} = Dimensions.get('window');
 
-const ProductDetails = ({route}: any) => {
+const ProductDetails = ({route, navigation}: any) => {
   const [product, setProduct] = useState<Product>({});
   const [selectedAttributes, setSelectedAttributes] = useState<any>({});
   const [showDetails, setShowDetails] = useState(false);
@@ -37,6 +39,31 @@ const ProductDetails = ({route}: any) => {
 
   const selectAttribute = (key: string, value: string) => {
     setSelectedAttributes({...selectedAttributes, [key]: value});
+  };
+
+  const addToBasket = () => {
+    let tempProduct: any = product;
+    tempProduct['selected_attribute'] = selectedAttributes;
+    tempProduct['quantity'] = 1;
+    const index = basketStore
+      .getState()
+      .products.findIndex((f: any) => isSameProduct(f, product));
+    
+      basketStore.dispatch(setBasketItemAction({...tempProduct}));
+      // if (index != -1) {
+      //   basketStore.dispatch(changeFoodCountAction({food, count, index}));
+      // } else {
+      //   basketStore.dispatch(setBasketItemAction({...tempProduct}));
+      // }
+
+    // if (userStore.getState()) {
+    // } else {
+    //   navigation.navigate('Profile');
+    // }
+  };
+
+  const isSameProduct = (product1: any, product2: any) => {
+    return product1._id == product2._id;
   };
 
   const renderAttributes = () => {
@@ -81,7 +108,9 @@ const ProductDetails = ({route}: any) => {
         <Text style={styles.title}>{product.title}</Text>
         <Text style={styles.subTitle}>{product.sub_title}</Text>
         {renderAttributes()}
-        <TouchableOpacity onPress={() => setShowDetails(!showDetails)} style={styles.detailsBtn}>
+        <TouchableOpacity
+          onPress={() => setShowDetails(!showDetails)}
+          style={styles.detailsBtn}>
           <Text>{showDetails ? 'Hide Details' : 'Show Details'}</Text>
         </TouchableOpacity>
         {product.description && showDetails && (
@@ -98,7 +127,9 @@ const ProductDetails = ({route}: any) => {
             {product.discounted_price}$
           </Text>
         </View>
-        <TouchableOpacity style={styles.addToBasket}>
+        <TouchableOpacity
+          style={styles.addToBasket}
+          onPress={() => addToBasket()}>
           <Text>Add To Basket</Text>
         </TouchableOpacity>
       </View>

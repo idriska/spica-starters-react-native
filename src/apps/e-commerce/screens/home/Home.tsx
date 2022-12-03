@@ -1,4 +1,4 @@
-import styles from './styles';
+import styles from './style';
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView, ScrollView} from 'react-native';
 import {Campaign_Product, Category} from '../../services/bucket';
